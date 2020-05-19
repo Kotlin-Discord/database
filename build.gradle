@@ -1,0 +1,88 @@
+plugins {
+    id 'application'
+    id 'maven-publish'
+
+    id 'com.github.jakemarsden.git-hooks' version '0.0.1'
+    id 'io.gitlab.arturbosch.detekt' version '1.8.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+}
+
+group 'com.kotlindiscord.database'
+targetCompatibility = 1.11
+version '1.0-SNAPSHOT'
+
+repositories {
+    jcenter()
+    mavenCentral()
+
+    maven {
+        name = 'Exposed'
+        url = 'https://dl.bintray.com/kotlin/exposed'
+    }
+}
+
+def exposedVersion = "0.24.1"
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    implementation "org.jetbrains.exposed:exposed-core:$exposedVersion"
+    implementation "org.jetbrains.exposed:exposed-dao:$exposedVersion"
+    implementation "org.jetbrains.exposed:exposed-jdbc:$exposedVersion"
+    implementation "org.jetbrains.exposed:exposed-java-time:$exposedVersion"
+
+    implementation "org.postgresql:postgresql:42.2.2"
+}
+
+application {
+    mainClassName = "com.kotlindiscord.database.MainKt"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config = files("detekt.yml")
+}
+
+gitHooks {
+    hooks = ['pre-commit': 'detekt']
+}
+
+jar {
+    manifest {
+        attributes(
+                "Main-Class": "com.kotlindiscord.database.MainKt"
+        )
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "KotDis"
+            url = uri("https://maven.kotlindiscord.com/repository/maven-snapshots/")
+
+            credentials {
+                username = project.findProperty("kotdis.user") ?: System.getenv("KOTLIN_DISCORD_USER")
+                password = project.findProperty("kotdis.password") ?: System.getenv("KOTLIN_DISCORD_PASSWORD")
+            }
+
+            version = project.version
+        }
+    }
+
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+            artifacts {
+                kotlinSourcesJar
+            }
+        }
+    }
+}
