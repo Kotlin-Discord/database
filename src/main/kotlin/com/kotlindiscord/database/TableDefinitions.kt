@@ -44,16 +44,14 @@ object Infractions : LongIdTable() {
         "InfractionTypes",
         { value -> InfractionTypes.valueOf(value as String) },
         { PGEnum("InfractionTypes", it) })
-    override val primaryKey = PrimaryKey(id, name = "PK_Infraction")
 }
 
 @Suppress("MagicNumber")
-object AuditLog : IdTable<Long>() {
-    override val id = Infractions.long("id").entityId()
+object AuditLog : LongIdTable() {
     val description = varchar("description", 500).nullable()
     val user = optReference("user", Users)
     val infraction = optReference("infraction", Infractions)
-    val action = Infractions.customEnumeration(
+    val action = AuditLog.customEnumeration(
         "action",
         "AuditActions",
         { value -> AuditActions.valueOf(value as String) },

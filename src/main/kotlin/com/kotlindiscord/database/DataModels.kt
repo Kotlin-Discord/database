@@ -36,7 +36,7 @@ class AuditLogEntry(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<AuditLogEntry>(AuditLog)
 
     var description by AuditLog.description
-    val user by User optionalReferencedOn AuditLog.user
-    val infraction by Infraction optionalReferencedOn AuditLog.infraction
-    val action by AuditLog.action
+    var user by User optionalReferencedOn AuditLog.user
+    var infraction by Infraction optionalReferencedOn AuditLog.infraction
+    var action by AuditLog.action
 }
