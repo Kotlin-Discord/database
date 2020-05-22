@@ -23,7 +23,6 @@ object UserRoles : Table() {
     )
 }
 
-
 @Suppress("MagicNumber")
 object Users : IdTable<Long>() {
     override val id = long("id").entityId()
@@ -35,7 +34,7 @@ object Users : IdTable<Long>() {
 
 @Suppress("MagicNumber")
 object Infractions : LongIdTable() {
-    val reason = varchar("reson", 2000)
+    val reason = varchar("reason", 2000)
     val infractor = reference("infractor", Users)
     val user = reference("user", Users)
     val created = datetime("created")
@@ -52,13 +51,13 @@ object Infractions : LongIdTable() {
 object AuditLog : IdTable<Long>() {
     override val id = Infractions.long("id").entityId()
     val description = varchar("description", 500).nullable()
-    val user = reference("user", Users)
+    val user = optReference("user", Users)
     val infraction = optReference("infraction", Infractions)
     val action = Infractions.customEnumeration(
         "action",
-        "action",
+        "AuditActions",
         { value -> AuditActions.valueOf(value as String) },
-        { PGEnum("Action", it) })
+        { PGEnum("AuditActions", it) })
 }
 
 enum class InfractionTypes { Kick, Ban, Warn, }
