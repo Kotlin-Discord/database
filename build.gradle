@@ -1,12 +1,16 @@
 buildscript {
     repositories {
-        jcenter()
-
         maven {
+            name = 'KotDis'
+            url = 'https://maven.kotlindiscord.com/repository/maven-public/'
+        }
+
+        maven {  // Harmonica devs are bad at Maven
             name = 'Jitpack'
             url = 'https://jitpack.io'
         }
     }
+
     dependencies {
         classpath 'org.jetbrains.kotlin:kotlin-script-util:1.2.41'
         classpath 'org.postgresql:postgresql:42.2.2'
@@ -30,15 +34,12 @@ targetCompatibility = 1.11
 version '1.0-SNAPSHOT'
 
 repositories {
-    jcenter()
-    mavenCentral()
-
     maven {
-        name = 'Exposed'
-        url = 'https://dl.bintray.com/kotlin/exposed'
+        name = 'KotDis'
+        url = 'https://maven.kotlindiscord.com/repository/maven-public/'
     }
 
-    maven {
+    maven {  // Harmonica devs are bad at Maven
         name = 'Jitpack'
         url = 'https://jitpack.io'
     }

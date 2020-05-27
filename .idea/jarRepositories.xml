@@ -31,5 +31,10 @@
       <option name="name" value="Jitpack" />
       <option name="url" value="https://jitpack.io" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="KotDis" />
+      <option name="name" value="KotDis" />
+      <option name="url" value="https://maven.kotlindiscord.com/repository/maven-public/" />
+    </remote-repository>
   </component>
 </project>
