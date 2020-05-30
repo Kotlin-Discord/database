@@ -1,6 +1,8 @@
 package com.kotlindiscord.database.migrator.commands
 
 import picocli.CommandLine.Command
+import picocli.CommandLine.Parameters
+import java.nio.file.Paths
 import java.util.concurrent.Callable
 
 @Command(
@@ -9,11 +11,34 @@ import java.util.concurrent.Callable
 )
 
 class CreateMigration : Callable<Int> {
+    @Parameters(
+        paramLabel = "NAME",
+        description = ["The name with which to start the migration file"],
+        defaultValue = "Migration"
+    )
+    lateinit var migrationClassName: String
     override fun call(): Int {
-        println("You have called the yet-to-be-implemented create command")
-        // TODO:
-        // Create a file named with the current time in com.kotlindiscord.database.migrations
-        // Add a boilerplate class to it
+        val currentTime = System.currentTimeMillis()
+        val migrationFile =
+            Paths.get(System.getenv("MIGRATIONS_DIR") + "/$migrationClassName$currentTime.kt").toFile()
+        migrationFile.parentFile.mkdirs()
+        migrationFile.createNewFile()
+        migrationFile.writeText(
+            """package com.kotlindiscord.database.migrations
+
+import com.kotlindiscord.database.migrator.AbstractMigration
+class $migrationClassName$currentTime : AbstractMigration {
+    override fun migrateUp() {
+
+    }
+
+    override fun migrateDown() {
+
+    }
+}"""
+        )
+        println("New migration created at $migrationFile")
+
         return 0
     }
 }
