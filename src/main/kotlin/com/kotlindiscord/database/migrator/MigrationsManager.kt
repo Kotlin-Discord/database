@@ -6,6 +6,7 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.reflections8.Reflections
 
 object Migrations : IdTable<Long>() {
     override val id = long("id").entityId()
@@ -27,7 +28,7 @@ class MigrationsManager {
     /**
      * Gets the id of the migration which was most recently applied to the database.
      */
-    val currentMigration: Long?
+    val currentMigrationId: Long?
         get() {
             var maxMigrationId: Long? = null
             transaction {
@@ -43,16 +44,23 @@ class MigrationsManager {
         }
 
     /**
-     * The available migration classes found in `com.kotlindiscord.database.migrations`.
+     * Map of the user created migrations against their IDs (the time at which they were created).
      */
-    val migrationClasses: List<AbstractMigration> by lazy { TODO() }
+    val migrationsMap: Map<Long, AbstractMigration> by lazy {
+        // TODO handle the case where we find a non migration object more elegantly
+        val reflections = Reflections("com.kotlindiscord.database.migrations")
 
-    /**
-     * Migrates the database down a step by calling the `down` method on the currently applied migration.
-     */
-    fun migrateDown() {
-        TODO()
+        val classes = reflections.getSubTypesOf(AbstractMigration::class.java)
+        @Suppress("MagicNumber")
+        val migrationIds = classes.map { it.name.takeLast(13).toLong() }
+        val maybeMigrations = classes.map { it.constructors.first().newInstance() }
+
+        if (maybeMigrations.all { it is AbstractMigration }) {
+            migrationIds.zip(maybeMigrations as List<AbstractMigration>).toMap()
+        } else mapOf()
+
     }
+
 
     /**
      * Moves the database up a single migration.
@@ -61,6 +69,13 @@ class MigrationsManager {
      * for the next migration class that hasn't been applied yet, and apply that.
      */
     fun migrateUp() {
+        TODO()
+    }
+
+    /**
+     * Migrates the database down a step by calling the `down` method on the currently applied migration.
+     */
+    fun migrateDown() {
         TODO()
     }
 
@@ -82,5 +97,6 @@ fun main() {
         password = System.getenv("DB_PASSWORD")
     )
 
-    println(MigrationsManager().currentMigration)
+    val obs = MigrationsManager().migrationsMap
+    println(obs)
 }
