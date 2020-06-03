@@ -99,7 +99,7 @@ class MigrationsManager {
      */
     fun migrateDown() {
         val currentMigrationObj = migrationsMap[currentMigrationId]
-        checkNotNull(currentMigrationObj)
+        checkNotNull(currentMigrationObj) {throw IllegalStateException("The database has no applied migrations.")}
         transaction {
             currentMigrationObj.migrateDown()
             Migration[currentMigrationId as Long].applied = false
@@ -123,25 +123,4 @@ class MigrationsManager {
         }
 
     }
-}
-
-
-/* Temporary main function for testing */
-fun main() {
-    val db = Database.connect(
-        "jdbc:postgresql://" + System.getenv("DB_URL"),
-        driver = "org.postgresql.Driver",
-        user = System.getenv("DB_USER"),
-        password = System.getenv("DB_PASSWORD")
-    )
-    db.useNestedTransactions = true
-    val manager = MigrationsManager()
-    manager.migrateUp()
-    manager.migrateUp()
-    manager.migrateDown()
-    manager.migrateDown()
-    manager.migrateAll()
-    manager.migrateDown()
-    manager.migrateDown()
-    manager.migrateAll()
 }

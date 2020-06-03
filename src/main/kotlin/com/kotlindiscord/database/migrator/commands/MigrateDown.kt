@@ -6,15 +6,15 @@ import picocli.CommandLine.Command
 import java.util.concurrent.Callable
 
 @Command(
-    name = "up",
-    description = ["Migrate the database upwards."]
+    name = "down",
+    description = ["Migrate the database downwards."]
 )
-class MigrateUp : Callable<Int> {
+class MigrateDown : Callable<Int> {
 
     override fun call(): Int {
         connectToDb()
-        MigrationsManager().migrateUp()
-        println("Database successfully migrated up.")
+        MigrationsManager().migrateDown()
+        println("Database successfully migrated down.")
         return 0
     }
 }

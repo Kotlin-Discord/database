@@ -29,13 +29,14 @@ class CreateMigration : Callable<Int> {
 import com.kotlindiscord.database.migrator.AbstractMigration
 class $migrationClassName$currentTime : AbstractMigration {
     override fun migrateUp() {
-
+        TODO()
     }
 
     override fun migrateDown() {
-
+        TODO()
     }
-}"""
+}
+"""
         )
         println("New migration created at $migrationFile")
 
