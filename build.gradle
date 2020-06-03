@@ -58,7 +58,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "com.kotlindiscord.database.migrator.MigratorKt"
+    mainClassName = "com.kotlindiscord.database.migrator.MigratorCliKt"
 }
 
 compileKotlin {
