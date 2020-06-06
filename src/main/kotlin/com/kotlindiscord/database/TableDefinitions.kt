@@ -17,10 +17,7 @@ object Roles : IdTable<Long>() {
 object UserRoles : Table() {
     private val user = reference("user", Users)
     private val role = reference("role", Roles)
-    override val primaryKey = PrimaryKey(
-        user,
-        role, name = "PK_user_roles"
-    )
+    override val primaryKey = PrimaryKey(user, role, name = "PK_user_roles")
 }
 
 @Suppress("MagicNumber")
@@ -46,20 +43,8 @@ object Infractions : LongIdTable() {
         { PGEnum("InfractionTypes", it) })
 }
 
-@Suppress("MagicNumber")
-object AuditLog : LongIdTable() {
-    val description = varchar("description", 500).nullable()
-    val user = optReference("user", Users)
-    val infraction = optReference("infraction", Infractions)
-    val action = AuditLog.customEnumeration(
-        "action",
-        "AuditActions",
-        { value -> AuditActions.valueOf(value as String) },
-        { PGEnum("AuditActions", it) })
-}
 
 enum class InfractionTypes { Kick, Ban, Warn, }
-enum class AuditActions { EditChannel, CreateChannel, GiveInfraction }
 class PGEnum<T : Enum<T>>(enumTypeName: String, enumValue: T?) : PGobject() {
     init {
         value = enumValue?.name
