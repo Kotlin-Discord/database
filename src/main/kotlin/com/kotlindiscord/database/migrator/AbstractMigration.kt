@@ -2,6 +2,17 @@ package com.kotlindiscord.database.migrator
 /** The base for user defined migrations. */
 interface AbstractMigration {
 
+
+    /**
+     * The ID for this migration.
+     *
+     * Assuming this Migration was created in the default way, then this migration is the unix timestamp of when it
+     * was created.
+     */
+    @Suppress("MagicNumber")
+    val id
+        get() = this.javaClass.name.takeLast(13).toLong()
+
     /**
      * Called when migrating the database upwards. Should contain a transaction, and assume there is a db connection.
      *
