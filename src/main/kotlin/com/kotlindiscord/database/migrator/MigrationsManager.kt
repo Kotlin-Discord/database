@@ -9,8 +9,9 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.reflections8.Reflections
 
 object Migrations : IdTable<Long>() {
-    override val id = long("id").entityId()
     val applied = bool("applied").default(false)
+
+    override val id = long("id").entityId()
     override val primaryKey = PrimaryKey(id, name = "PK_MIGRATION_ID")
 }
 
@@ -47,20 +48,30 @@ class MigrationsManager {
      * Map of the user created migrations against their IDs (the time at which they were created).
      */
     private val migrationsMap: Map<Long, AbstractMigration> by lazy {
-        // TODO handle the case where we find a non migration object more elegantly
-        val reflections = Reflections("com.kotlindiscord.database.migrations")
 
+        val reflections = Reflections("com.kotlindiscord.database.migrations")
         val classes = reflections.getSubTypesOf(AbstractMigration::class.java)
 
-        @Suppress("MagicNumber")
-        val migrationIds = classes.map { it.name.takeLast(13).toLong() }
-        val maybeMigrations = classes.map { it.constructors.first().newInstance() }
-        if (maybeMigrations.all { it is AbstractMigration }) {
-            migrationIds.zip(maybeMigrations as List<AbstractMigration>).toMap()
-        } else mapOf()
+        val migrationInstances = classes
+            .filter { it.constructors.isNotEmpty() }
+            .map { it.constructors.first().newInstance() }
+            .filterIsInstance<AbstractMigration>()
 
+        migrationInstances.map { it.id }.zip(migrationInstances).toMap()
     }
 
+    /**
+     * The first unapplied migration.
+     */
+    private val nextMigration: AbstractMigration?
+        get() {
+            val sortedMigrationKeys: List<Long> = migrationsMap.keys.sorted()
+            return if (currentMigrationId == null) {
+                migrationsMap[sortedMigrationKeys.min()!!]
+            } else {
+                migrationsMap[sortedMigrationKeys[sortedMigrationKeys.indexOf(currentMigrationId as Long) + 1]]
+            }
+        }
 
     /**
      * Moves the database up a single migration.
@@ -74,23 +85,17 @@ class MigrationsManager {
             throw IllegalStateException("Database fully migrated.")
         }
 
-        val sortedMigrationKeys: List<Long> = migrationsMap.keys.sorted()
-        var nextMigrationId: Long
-        val nextMigration =
-            if (currentMigrationId == null) {
-                nextMigrationId = sortedMigrationKeys.min()!!
-                migrationsMap[nextMigrationId]
-            } else {
-                nextMigrationId = sortedMigrationKeys[sortedMigrationKeys.indexOf(currentMigrationId as Long) + 1]
-                migrationsMap[nextMigrationId]
-            }
-        checkNotNull(nextMigration) { throw IllegalStateException("There was a problem migrating.") }
+        val migrationToApply = nextMigration
+        checkNotNull(migrationToApply) { throw IllegalStateException("There was a problem migrating.") }
+
         transaction {
-            nextMigration.migrateUp()
+
+            migrationToApply.migrateUp()
+
             SchemaUtils.create(Migrations)
-            val migrationToApply =
-                Migration.findById(nextMigrationId) ?: Migration.new(nextMigrationId) { applied = true }
-            migrationToApply.applied = true
+            val appliedMigrationDatabaseObject =
+                Migration.findById(migrationToApply.id) ?: Migration.new(migrationToApply.id) { applied = true }
+            appliedMigrationDatabaseObject.applied = true
         }
     }
 
@@ -99,10 +104,11 @@ class MigrationsManager {
      */
     fun migrateDown() {
         val currentMigrationObj = migrationsMap[currentMigrationId]
-        checkNotNull(currentMigrationObj) {throw IllegalStateException("The database has no applied migrations.")}
+        checkNotNull(currentMigrationObj) { throw IllegalStateException("The database has no applied migrations.") }
+
         transaction {
             currentMigrationObj.migrateDown()
-            Migration[currentMigrationId as Long].applied = false
+            Migration[currentMigrationObj.id].applied = false
         }
     }
 
