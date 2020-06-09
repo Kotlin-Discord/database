@@ -24,19 +24,19 @@ class CreateMigration : Callable<Int> {
         migrationFile.parentFile.mkdirs()
         migrationFile.createNewFile()
         migrationFile.writeText(
-            """package com.kotlindiscord.database.migrations
-
-import com.kotlindiscord.database.migrator.AbstractMigration
-class $migrationClassName$currentTime : AbstractMigration {
-    override fun migrateUp() {
-        TODO()
-    }
-
-    override fun migrateDown() {
-        TODO()
-    }
-}
-"""
+            """
+                package com.kotlindiscord.database.migrations
+                import com.kotlindiscord.database.migrator.AbstractMigration
+                class $migrationClassName$currentTime : AbstractMigration {
+                    override fun migrateUp() {
+                        TODO()
+                    }
+                
+                    override fun migrateDown() {
+                        TODO()
+                    }
+                }
+""".trimIndent()
         )
         println("New migration created at $migrationFile")
 

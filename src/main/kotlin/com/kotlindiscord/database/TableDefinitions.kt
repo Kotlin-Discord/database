@@ -8,24 +8,27 @@ import org.postgresql.util.PGobject
 
 @Suppress("MagicNumber")
 object Roles : IdTable<Long>() {
-    override val id = long("id").entityId()
     val name = varchar("name", 100)
     val colour = integer("colour")
+
+    override val id = long("id").entityId()
     override val primaryKey = PrimaryKey(id, name = "PK_Role_ID")
 }
 
 object UserRoles : Table() {
-    private val user = reference("user", Users)
-    private val role = reference("role", Roles)
+    val user = reference("user", Users)
+    val role = reference("role", Roles)
+
     override val primaryKey = PrimaryKey(user, role, name = "PK_user_roles")
 }
 
 @Suppress("MagicNumber")
 object Users : IdTable<Long>() {
-    override val id = long("id").entityId()
     val username = varchar("name", 32)
     val discriminator = varchar("discriminator", 50)
     val avatarUrl = varchar("is_member", 200)
+
+    override val id = long("id").entityId()
     override val primaryKey = PrimaryKey(id, name = "PK_User_ID")
 }
 
@@ -40,7 +43,8 @@ object Infractions : LongIdTable() {
         "type",
         "InfractionTypes",
         { value -> InfractionTypes.valueOf(value as String) },
-        { PGEnum("InfractionTypes", it) })
+        { PGEnum("InfractionTypes", it) }
+    )
 }
 
 

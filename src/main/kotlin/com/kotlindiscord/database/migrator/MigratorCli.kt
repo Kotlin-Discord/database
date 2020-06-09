@@ -17,6 +17,7 @@ class MigratorCli : Callable<Int> {
         CommandLine.usage(this, System.out)
         return 0
     }
+
     fun main(args: Array<String>) {
         val returnValue = CommandLine(MigratorCli()).execute(*args)
         exitProcess(returnValue)
