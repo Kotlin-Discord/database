@@ -1,6 +1,6 @@
 package com.kotlindiscord.database.migrator.commands
 
-import com.kotlindiscord.database.startDbConnection
+import com.kotlindiscord.database.startDbAndLogger
 import com.kotlindiscord.database.migrator.MigrationsManager
 import picocli.CommandLine.Command
 import java.util.concurrent.Callable
@@ -9,7 +9,7 @@ import java.util.concurrent.Callable
 class MigrateUp : Callable<Int> {
 
     override fun call(): Int {
-        startDbConnection()
+        startDbAndLogger()
         MigrationsManager().migrateUp()
         println("Database successfully migrated up.")
         return 0
