@@ -1,11 +1,12 @@
 Database
 ========
 
-# Defining models and taples
-This project relies on [Exposed](https://github.com/JetBrains/Exposed) to define PostgreSQL tables, and access to tables in the database.
+# Defining models and tables
+This project relies on [Exposed](https://github.com/JetBrains/Exposed) to provide access to an underlying 
+PostgreSQL database.
 
-The main way to access the database is through the [Exposed DAO](https://github.com/JetBrains/Exposed/wiki/DAO). The models for this project can be found in 
-`com.kotlindiscord.database.DataModels`
+The [Exposed DSL API](https://github.com/JetBrains/Exposed/wiki/DSL) is used to define the underlying tables and schema, 
+which is then accessed or manipulated through the [Exposed DAO API](https://github.com/JetBrains/Exposed/wiki/DAO).
 
 # Migrations
 In order to add new models, three things need to happen. Firstly, a Data Access Object and DSL table will need to be 
@@ -25,7 +26,6 @@ Connecting to the database requires the following environment variables to be se
     * The password to use when connecting to the database.
     * Example: `docker`
 
-### Configuring the migrations directory
 ### Commands
 * `create`
     * Requires the `MIGRATIONS_DIR` environment variable to be set, and point at the directory where the 
@@ -33,8 +33,8 @@ Connecting to the database requires the following environment variables to be se
         * Example: `/users/{username}/IdeaProjects/database/src/main/kotlin/com/kotlindiscord/database/migrations`
     * Creates a new blank migration in `com.kotlindiscord.database.migrations`.
     * You are required to fill in the implementations of the `up()` and `down()` methods of the created migration.
-        * Migrations can include their own transaction (which will be called as a nested transaction), or they can rely on
-        the parent transaction.
+        * Migrations can include their own transaction (which will be called as a nested transaction), or they can rely 
+        on the parent transaction.
     * The tool will need to be recompiled after any new migrations have been added.
 * `up`
    * Moves the database forwards a single migration. 
