@@ -12,7 +12,6 @@ class Migration1591121527450 : AbstractMigration {
             SchemaUtils.create(Roles, Users, Infractions)
             SchemaUtils.create(UserRoles)
         }
-
     }
 
     override fun migrateDown() {
@@ -21,6 +20,5 @@ class Migration1591121527450 : AbstractMigration {
             SchemaUtils.drop(Roles, Users, Infractions)
             exec("DROP TYPE InfractionTypes")
         }
-
     }
 }

@@ -32,9 +32,11 @@ class MigrationsManager {
     private val currentMigrationId: Long?
         get() {
             var maxMigrationId: Long? = null
+
             transaction {
                 SchemaUtils.create(Migrations)
                 val appliedMigrations = Migration.find { Migrations.applied eq true }
+
                 if (!appliedMigrations.empty()) {
                     val maxMigration = appliedMigrations.maxBy { it.id }
                     if (maxMigration != null) maxMigrationId = maxMigration.id.value

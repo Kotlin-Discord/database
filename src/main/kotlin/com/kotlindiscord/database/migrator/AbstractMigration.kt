@@ -6,11 +6,10 @@ interface AbstractMigration {
     /**
      * The ID for this migration.
      *
-     * Assuming this Migration was created in the default way, then this migration is the unix timestamp of when it
+     * Assuming this Migration was created in the default way, then this property is the unix timestamp of when it
      * was created.
      */
-    @Suppress("MagicNumber")
-    val id
+    val id@Suppress("MagicNumber")
         get() = this.javaClass.name.takeLast(13).toLong()
 
     /**
