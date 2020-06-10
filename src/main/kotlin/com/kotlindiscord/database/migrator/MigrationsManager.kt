@@ -50,7 +50,6 @@ class MigrationsManager {
      * Map of the user created migrations against their IDs (the time at which they were created).
      */
     private val migrationsMap: Map<Long, AbstractMigration> by lazy {
-
         val reflections = Reflections("com.kotlindiscord.database.migrations")
         val classes = reflections.getSubTypesOf(AbstractMigration::class.java)
 
@@ -66,6 +65,7 @@ class MigrationsManager {
      * The first unapplied migration.
      */
     private val nextMigration: AbstractMigration?
+
         get() {
             val sortedMigrationKeys: List<Long> = migrationsMap.keys.sorted()
             return if (currentMigrationId == null) {
