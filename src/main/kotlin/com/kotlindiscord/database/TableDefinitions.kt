@@ -38,7 +38,7 @@ object Infractions : LongIdTable() {
     val infractor = reference("infractor", Users)
     val user = reference("user", Users)
     val created = datetime("created")
-    val expires = datetime("expires")
+    val expires = datetime("expires").nullable()
     val type = customEnumeration(
         "type",
         "InfractionTypes",
