@@ -2,7 +2,7 @@ package com.kotlindiscord.database
 
 import org.jetbrains.exposed.dao.id.IdTable
 import org.jetbrains.exposed.dao.id.LongIdTable
-import org.jetbrains.exposed.sql.*
+import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.`java-time`.datetime
 import org.postgresql.util.PGobject
 
@@ -38,7 +38,7 @@ object Infractions : LongIdTable() {
     val infractor = reference("infractor", Users)
     val user = reference("user", Users)
     val created = datetime("created")
-    val expires = datetime("expires")
+    val expires = datetime("expires").nullable()
     val type = customEnumeration(
         "type",
         "InfractionTypes",
@@ -48,7 +48,7 @@ object Infractions : LongIdTable() {
 }
 
 
-enum class InfractionTypes { Kick, Ban, Warn, }
+enum class InfractionTypes { Kick, Ban, Warn, Mute, }
 class PGEnum<T : Enum<T>>(enumTypeName: String, enumValue: T?) : PGobject() {
     init {
         value = enumValue?.name

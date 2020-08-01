@@ -26,7 +26,9 @@ class CreateMigration : Callable<Int> {
         migrationFile.writeText(
             """
                 package com.kotlindiscord.database.migrations
+
                 import com.kotlindiscord.database.migrator.AbstractMigration
+
                 class $migrationClassName$currentTime : AbstractMigration {
                     override fun migrateUp() {
                         TODO()
