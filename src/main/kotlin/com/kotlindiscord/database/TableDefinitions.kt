@@ -27,6 +27,7 @@ object Users : IdTable<Long>() {
     val username = varchar("name", 32)
     val discriminator = varchar("discriminator", 50)
     val avatarUrl = varchar("avatar_url", 200)
+    val present = bool("present").default(true)
 
     override val id = long("id").entityId()
     override val primaryKey = PrimaryKey(id, name = "PK_User_ID")
