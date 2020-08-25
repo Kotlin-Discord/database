@@ -10,7 +10,7 @@ class User(id: EntityID<Long>) : LongEntity(id) {
     var discriminator by Users.discriminator
     var userName by Users.username
     var avatarUrl by Users.avatarUrl
-    val present by Users.present
+    var present by Users.present
 
     var roles by Role via UserRoles
 }
