@@ -33,7 +33,7 @@ repositories {
     }
 }
 
-def exposedVersion = "0.26.2"
+def exposedVersion = "0.27.1"
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
